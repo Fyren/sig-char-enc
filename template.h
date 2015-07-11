@@ -4,7 +4,7 @@
 class IPluginContext;
 
 template<char...> struct CharPack { static const char c = '?'; typedef CharPack<> next; };
-template<typename T> struct val { typedef CharPack<'?'> x; };
+template<typename T> struct val { typedef CharPack<'?'> CP; };
 
 #include "types.i"
 DeclVoid();
@@ -25,29 +25,29 @@ template<char... Args>
 const char Sig<Args...>::args[sizeof...(Args)] = { Args... };
 
 template<typename...> 
-struct ArgTypes {};
+struct ArgPack {};
 
-template<typename CP, typename Types, char... ArgVals>
+template<typename CP, typename Types, char... Chars>
 struct gen2;
 
-template<typename CP, typename Types, char... Vals> 
+template<typename CP, typename Types, char... Chars> 
 struct gen2 {
-	typedef typename gen2<typename CP::next, Types, Vals..., CP::c>::res res;
+	typedef typename gen2<typename CP::next, Types, Chars..., CP::c>::res res;
 };
 
-template<typename First, typename... Rest, char... Vals> 
-struct gen2<CharPack<>, ArgTypes<First, Rest...>, Vals...> {
-	typedef typename gen2<typename val<First>::x, ArgTypes<Rest...>, Vals...>::res res;
+template<typename First, typename... Rest, char... Chars> 
+struct gen2<CharPack<>, ArgPack<First, Rest...>, Chars...> {
+	typedef typename gen2<typename val<First>::CP, ArgPack<Rest...>, Chars...>::res res;
 };
 
-template<char... Vals> 
-struct gen2<CharPack<>, ArgTypes<>, Vals...> {
-	typedef Sig<Vals...> res;
+template<char... Chars> 
+struct gen2<CharPack<>, ArgPack<>, Chars...> {
+	typedef Sig<Chars...> res;
 };
 
 template<typename... Args>
 struct gen {
-	typedef typename gen2<CharPack<>, ArgTypes<Args...>>::res res;
+	typedef typename gen2<CharPack<>, ArgPack<Args...>>::res res;
 };
 
 template <typename R, typename... Args>
