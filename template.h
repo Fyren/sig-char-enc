@@ -16,13 +16,13 @@ DeclType(char*, 's');
 DeclCharPack('c');
 DeclTypeAndRef(char, 'c');
 
-template<char... Args> struct Sig {
-	static const char args[sizeof...(Args)];
-	static const size_t n = sizeof...(Args);
+template<char... Chars> struct Sig {
+	static const char args[sizeof...(Chars)];
+	static const size_t n = sizeof...(Chars);
 };
 
-template<char... Args> 
-const char Sig<Args...>::args[sizeof...(Args)] = { Args... };
+template<char... Chars> 
+const char Sig<Chars...>::args[sizeof...(Chars)] = { Chars... };
 
 template<typename...> 
 struct ArgPack {};
